@@ -3,6 +3,7 @@ export class StudentsDto{
     readonly surname: string
     readonly email: string
     readonly cours: string
+    readonly isActive: Array<string>
     readonly password: string
     readonly repeat_password: string
 }
