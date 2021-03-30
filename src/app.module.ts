@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 require("dotenv").config();
 
-import { StudentsModule } from './students/students.module';
+import {  UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { configModule } from './configure.root';
 import { TokenModule } from './token/token.module';
@@ -12,7 +12,7 @@ import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
-  StudentsModule,
+  UsersModule,
   configModule,
   AuthModule,
   TokenModule,

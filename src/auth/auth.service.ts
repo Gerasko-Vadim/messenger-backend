@@ -1,16 +1,16 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import moment = require('moment');
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from 'src/mail/mail.service';
-import { StudentsDto } from 'src/students/dto/students.dto';
-import { isActive } from 'src/students/enums/isActive.enum';
-import { IStudent } from 'src/students/interface/student.interface';
-import { StudentsService } from 'src/students/students.service';
+import { isActive } from 'src/users/enums/isActive.enum';
+import { IUsers } from 'src/users/interface/users.interface';
+import {  UsersService } from 'src/users/users.service';
 import { TokenService } from 'src/token/token.service';
 import { SignOptions } from 'jsonwebtoken';
 import {CreateTokenDto} from "src/token/dto/create-token.dto"
-import { Student } from 'src/students/schemas/students.schema';
+
+import { UsersDto } from 'src/users/dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
 
     constructor(
         private readonly jwtService: JwtService,
-        private readonly studentService: StudentsService,
+        private readonly usersService: UsersService,
         private readonly tokenService: TokenService,
         private readonly configService: ConfigService,
         private readonly mailService: MailService,
@@ -27,14 +27,18 @@ export class AuthService {
             ('FE_APP_URL');
     }
 
-    async signUp(studentsDto:StudentsDto): Promise<StudentsDto>{
-        const user = await this.studentService.createStudent(studentsDto);
+    async signUp(userDto:UsersDto): Promise<UsersDto>{
+        const checkedUser = await this.usersService.findEmail(userDto.email);
+        if(checkedUser){
+            throw new NotFoundException(`User the email ${userDto.email} exist`)
+        }
+        const user = await this.usersService.createUsers(userDto);
         await this.sendConfirmation(user);
-        return studentsDto;
+        return userDto;
     }
-    async confirm(token:string): Promise<IStudent>{
+    async confirm(token:string): Promise<IUsers>{
         const data = await this.verifyToken(token);
-        const student = await this.studentService.find(data._id);
+        const student = await this.usersService.find(data._id);
         await this.tokenService.delete(data._id,token);
 
         if(student && student.isActive === isActive.pending){
@@ -43,7 +47,7 @@ export class AuthService {
         }
         throw new BadRequestException('Confirmation error');
     }
-    async sendConfirmation(student:IStudent){
+    async sendConfirmation(student:IUsers){
         const expiresIn= 60*60*24;
         const tokenPayload={
             _id:student._id,

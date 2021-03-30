@@ -4,8 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { MailModule } from 'src/mail/mail.module';
 import { MailService } from 'src/mail/mail.service';
-import { StudentsModule } from 'src/students/students.module';
-import { StudentsService } from 'src/students/students.service';
+import {  UsersModule } from 'src/users/users.module';
 import { TokenModule } from 'src/token/token.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -13,7 +12,7 @@ import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports:[
-    StudentsModule,
+    UsersModule,
     TokenModule,
     MailModule,
     configModule,

@@ -2,20 +2,23 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from 'mongoose';
 import { isActive } from "../enums/isActive.enum";
 
-export type StudentDocument = Student & Document;
+export type UsersDocument = Users & Document;
 
 @Schema()
-export class Student {
+export class Users {
     @Prop({type: String, required: true})
     name: string;
 
+    @Prop({type:String, required:true})
+    patronymic: string
+    
     @Prop({ type: String, required: true })
     surname: string;
 
     @Prop({ type: String, required: true })
     email: string;
 
-    @Prop({ type: String, required: true })
+    @Prop({ type: String, required: false })
     group: string;
 
     @Prop({ type: String, required: true })
@@ -26,7 +29,9 @@ export class Student {
 
     @Prop({ type: String, default: null })
     avatar: string;
+    @Prop({type: String})
+    role: string
 }
 
-export const StudentSchema = SchemaFactory.createForClass(Student);
+export const UsersSchema = SchemaFactory.createForClass(Users);
 
