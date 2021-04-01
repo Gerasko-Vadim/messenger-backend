@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, NotFoundException, UnauthorizedExcepti
 import { ConfigService } from '@nestjs/config';
 import moment = require('moment');
 import { JwtService } from '@nestjs/jwt';
-import { MailService } from 'src/mail/mail.service';
 import { isActive } from 'src/users/enums/isActive.enum';
 import { IUsers } from 'src/users/interface/users.interface';
 import {  UsersService } from 'src/users/users.service';
@@ -11,6 +10,7 @@ import { SignOptions } from 'jsonwebtoken';
 import {CreateTokenDto} from "src/token/dto/create-token.dto"
 
 import { UsersDto } from 'src/users/dto/user.dto';
+import { sendEmail } from 'src/confirm/confirmMail';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +21,6 @@ export class AuthService {
         private readonly usersService: UsersService,
         private readonly tokenService: TokenService,
         private readonly configService: ConfigService,
-        private readonly mailService: MailService,
     ) {
         this.clientAppUrl = this.configService.get<string>
             ('FE_APP_URL');
@@ -61,15 +60,16 @@ export class AuthService {
         const confirmLink = `${this.clientAppUrl}/auth/confirm?token=${token}`;
 
         await this.saveToken({token,uId:student._id,expireAt});
-        await this.mailService.send({
-            from:this.configService.get<string>('MY_MAIL'),
-            to:student.email,
-            subject:'Verify User',
-            text:`
-            <h3>Hello ${student.name}!</h3>
-            <p>Please use this <a href="${confirmLink}">link</a> to confirm your account.</p>
-            `
-        })
+        await sendEmail(student.email,confirmLink);
+        // await this.mailService.send({
+        //     from:this.configService.get<string>('MY_MAIL'),
+        //     to:student.email,
+        //     subject:'Verify User',
+        //     text:`
+        //     <h3>Hello ${student.name}!</h3>
+        //     <p>Please use this <a href="${confirmLink}">link</a> to confirm your account.</p>
+        //     `
+        // })
     }
 
     private async verifyToken(token): Promise<any> {

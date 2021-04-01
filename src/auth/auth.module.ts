@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { configModule } from '../configure.root';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { MailModule } from 'src/mail/mail.module';
-import { MailService } from 'src/mail/mail.service';
 import {  UsersModule } from 'src/users/users.module';
 import { TokenModule } from 'src/token/token.module';
 import { AuthController } from './auth.controller';
@@ -14,7 +12,6 @@ import { JwtStrategy } from './jwt.strategy';
   imports:[
     UsersModule,
     TokenModule,
-    MailModule,
     configModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
