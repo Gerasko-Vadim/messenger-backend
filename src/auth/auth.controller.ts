@@ -1,4 +1,4 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
 import {  UsersDto } from 'src/users/dto/user.dto';
 import { AuthService } from './auth.service';
 import * as _ from 'lodash';
@@ -19,5 +19,6 @@ export class AuthController {
         const user = _.assignIn(usersDto, { role: role.teacher })
         return this.authService.signUp(user);
     }
+
 
 }
