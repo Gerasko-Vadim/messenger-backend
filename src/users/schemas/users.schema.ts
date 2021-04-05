@@ -24,7 +24,7 @@ export class Users {
     @Prop({ type: String, required: true })
     password: string;
 
-    @Prop({ type: String, enum: Object.values(isActive), default: isActive.pending })
+    @Prop({ type: String, enum: Object.values(isActive), default: isActive.active })
     isActive: string;
 
     @Prop({ type: String, default: null })

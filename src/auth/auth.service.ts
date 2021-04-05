@@ -60,7 +60,7 @@ export class AuthService {
         const confirmLink = `${this.clientAppUrl}/auth/confirm?token=${token}`;
 
         await this.saveToken({token,uId:student._id,expireAt});
-        await sendEmail(student.email,confirmLink);
+        //await sendEmail(student.email,confirmLink);
         // await this.mailService.send({
         //     from:this.configService.get<string>('MY_MAIL'),
         //     to:student.email,

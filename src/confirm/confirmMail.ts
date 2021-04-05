@@ -6,7 +6,7 @@ import * as sgMail from '@sendgrid/mail';
 
 export const sendEmail = async (email:string, link:string)=>{
 
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+    sgMail.setApiKey(`${process.env.SENDGRID_API_KEY}`)
     const msg = {
       to: `${process.env.MY_MAIL}`, // Change to your recipient
       from: email, // Change to your verified sender
