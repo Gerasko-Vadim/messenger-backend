@@ -6,7 +6,8 @@ import {  UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { configModule } from './configure.root';
 import { TokenModule } from './token/token.module';
-import { DefaultAdminModule } from 'nestjs-admin'
+import { AdminModule } from './admin/admin.module';
+
 
 import * as dotenv from "dotenv"
 
@@ -25,7 +26,7 @@ dotenv.config();
       useUnifiedTopology: true
     }
   ),
-  DefaultAdminModule
+  AdminModule,
  ],
 })
 export class AppModule {}

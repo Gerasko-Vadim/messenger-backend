@@ -1,16 +1,23 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, MethodNotAllowedException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import moment = require('moment');
+import * as moment from 'moment';
+import * as bcrypt from 'bcrypt';
+import * as _ from 'lodash';
+
 import { JwtService } from '@nestjs/jwt';
 import { isActive } from 'src/users/enums/isActive.enum';
 import { IUsers } from 'src/users/interface/users.interface';
-import {  UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/users.service';
 import { TokenService } from 'src/token/token.service';
 import { SignOptions } from 'jsonwebtoken';
-import {CreateTokenDto} from "src/token/dto/create-token.dto"
+import { CreateTokenDto } from "src/token/dto/create-token.dto"
 
 import { UsersDto } from 'src/users/dto/user.dto';
-import { sendEmail } from 'src/confirm/confirmMail';
+// import { sendEmail } from 'src/confirm/confirmMail';
+import { SignInDto } from './dto/signIn.dto';
+import { ITokenPayload } from './interface/token-payload.interface';
+import { IReadableUser } from 'src/users/interface/readable-user.interface';
+import { userSensitiveFieldsEnum } from 'src/users/enums/protected-fields.enum';
 
 @Injectable()
 export class AuthService {
@@ -26,40 +33,75 @@ export class AuthService {
             ('FE_APP_URL');
     }
 
-    async signUp(userDto:UsersDto): Promise<UsersDto>{
+    async signUp(userDto: UsersDto): Promise<UsersDto> {
         const checkedUser = await this.usersService.findEmail(userDto.email);
-        if(checkedUser){
+        if (checkedUser) {
             throw new NotFoundException(`User the email ${userDto.email} exist`)
         }
         const user = await this.usersService.createUsers(userDto);
         await this.sendConfirmation(user);
         return userDto;
     }
-    async confirm(token:string): Promise<IUsers>{
+
+    async signIn({email,password}:SignInDto): Promise<IReadableUser>{
+        const user = await (await this.usersService.findEmail(email));
+
+        if(user && (await bcrypt.compare(password, user.password))){
+            if(user.isActive!== isActive.active){
+                throw new MethodNotAllowedException();
+            }
+            const tokenPayload: ITokenPayload = {
+                _id:user._id,
+                isActive: user.isActive,
+                roles:user.role
+            };
+    
+            const token = await this.generateToken(tokenPayload);
+            const expireAt = moment()
+            .add(1,'day')
+            .toISOString();
+    
+            await this.saveToken({
+                token,
+                expireAt,
+                uId:user._id,
+            });
+    
+            const readableUser = user.toObject() as IReadableUser;
+            readableUser.accessToken=token;
+            return _.omit<any>(readableUser,Object.values(userSensitiveFieldsEnum)) as IReadableUser;
+        }
+
+        throw new BadRequestException('Invalid credentials');
+
+    }
+
+    async confirm(token: string): Promise<IUsers> {
         const data = await this.verifyToken(token);
         const student = await this.usersService.find(data._id);
-        await this.tokenService.delete(data._id,token);
+        await this.tokenService.delete(data._id, token);
 
-        if(student && student.isActive === isActive.pending){
+        if (student && student.isActive === isActive.pending) {
             student.isActive = isActive.active;
             return student.save();
         }
         throw new BadRequestException('Confirmation error');
     }
-    async sendConfirmation(student:IUsers){
-        const expiresIn= 60*60*24;
-        const tokenPayload={
-            _id:student._id,
-            isActive:student.isActive
+    async sendConfirmation(user: IUsers) {
+        const expiresIn = 60 * 60 * 24;
+        const tokenPayload = {
+            _id: user._id,
+            isActive: user.isActive,
+            roles:user.role
         }
-        const expireAt=moment()
-        .add(1,'day')
-        .toISOString()
+        const expireAt = moment()
+            .add(1, 'day')
+            .toISOString()
 
         const token = await this.generateToken(tokenPayload, { expiresIn });
         const confirmLink = `${this.clientAppUrl}/auth/confirm?token=${token}`;
 
-        await this.saveToken({token,uId:student._id,expireAt});
+        await this.saveToken({ token, uId: user._id, expireAt });
         //await sendEmail(student.email,confirmLink);
         // await this.mailService.send({
         //     from:this.configService.get<string>('MY_MAIL'),
@@ -86,7 +128,7 @@ export class AuthService {
         }
     }
 
-    private async generateToken(data, options?: SignOptions): Promise<string> {
+    private async generateToken(data: ITokenPayload, options?: SignOptions): Promise<string> {
         return this.jwtService.sign(data, options);
     }
     private async saveToken(createStudentTokenDto: CreateTokenDto) {
