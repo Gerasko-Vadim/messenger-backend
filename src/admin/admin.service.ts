@@ -12,6 +12,8 @@ import * as moment from 'moment';
 import { CreateTokenDto } from 'src/token/dto/create-token.dto';
 import { adminSensitiveFieldsEnum } from './enums/admin-sensitive.enum';
 import { TokenService } from 'src/token/token.service';
+import { JwtStrategy } from 'src/auth/jwt.strategy';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class AdminService {
@@ -20,6 +22,7 @@ export class AdminService {
     private adminModel: Model<AdminDocument>,
     private readonly jwtService: JwtService,
     private readonly tokenService: TokenService,
+    private readonly authService:AuthService,
   ) { }
   private readonly defaultAdmin = {
     email: "admin",
@@ -82,5 +85,12 @@ export class AdminService {
 
   async findEmail(email: string): Promise<IAdmin> {
     return await this.adminModel.findOne({ email }).exec();
+  }
+
+  async getProfile(req : any){
+    const token = req.headers.authorization.slice(7);
+    const profile = await this.authService.verifyToken(token);
+    return await this.adminModel.findById(profile._id);
+
   }
 }
