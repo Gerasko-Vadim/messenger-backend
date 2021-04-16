@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { configModule } from './configure.root';
 import { TokenModule } from './token/token.module';
 import { AdminModule } from './admin/admin.module';
+import { GroupsModule } from './groups/groups.module';
 
 
 import * as dotenv from "dotenv"
@@ -27,6 +28,7 @@ dotenv.config();
     }
   ),
   AdminModule,
+  GroupsModule,
  ],
 })
 export class AppModule {}

@@ -7,6 +7,7 @@ import { Users, UsersDocument } from './schemas/users.schema';
 import * as bcrypt from 'bcrypt';
 import { IUsers } from './interface/users.interface';
 import * as _ from 'lodash';
+import { role } from './enums/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,14 @@ export class UsersService {
     }
     async find(id: string): Promise<IUsers> {
         return await this.userModel.findById(id).exec();
+    }
+
+    async getAllTeachers (): Promise<IUsers[]>{
+        return await this.userModel.find({role: role.teacher})
+    }
+
+    async getAllStudents (): Promise<IUsers[]>{
+        return await this.userModel.find({role: role.student})
     }
     async findEmail(email: string): Promise<IUsers> {
         return await this.userModel.findOne({ email }).exec();

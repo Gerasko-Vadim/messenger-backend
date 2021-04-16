@@ -9,6 +9,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
+import { UsersModule } from 'src/users/users.module';
+import { GroupsModule } from 'src/groups/groups.module';
 
 @Module({
   controllers: [AdminController,],
@@ -16,6 +18,8 @@ import { AuthService } from 'src/auth/auth.service';
   imports:[MongooseModule.forFeature([{ name: Admin.name, schema: AdminSchema }]),
   TokenModule,
   AuthModule,
+  UsersModule,
+  GroupsModule,
   configModule,
   PassportModule.register({ defaultStrategy: 'jwt' }),
   JwtModule.register({

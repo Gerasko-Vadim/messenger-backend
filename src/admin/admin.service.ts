@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateAdminDto } from './dto/create-admin.dto';
@@ -14,6 +14,19 @@ import { adminSensitiveFieldsEnum } from './enums/admin-sensitive.enum';
 import { TokenService } from 'src/token/token.service';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
 import { AuthService } from 'src/auth/auth.service';
+import { RefreshTokenDto } from 'src/token/dto/refresh-token.dto';
+import { ITokenPayload } from 'src/auth/interface/token-payload.interface';
+import { IUsers } from 'src/users/interface/users.interface';
+import { UsersService } from 'src/users/users.service';
+import { IReadableUser } from 'src/users/interface/readable-user.interface';
+import { role } from 'src/users/enums/role.enum';
+import { userSensitiveFieldsEnum } from 'src/users/enums/protected-fields.enum';
+import { plainToClass } from 'class-transformer';
+import { ReadableUserDto } from './dto/readable-user.dto';
+import { IGroup } from 'src/groups/interface/group.interface';
+import { GroupsService } from 'src/groups/groups.service';
+import { CreateGroupDto } from 'src/groups/dto/create-group.dto';
+import { UpdateGroupDto } from 'src/groups/dto/update-group.dto';
 
 @Injectable()
 export class AdminService {
@@ -22,7 +35,9 @@ export class AdminService {
     private adminModel: Model<AdminDocument>,
     private readonly jwtService: JwtService,
     private readonly tokenService: TokenService,
-    private readonly authService:AuthService,
+    private readonly authService: AuthService,
+    private readonly userService: UsersService,
+    private readonly groupService: GroupsService
   ) { }
   private readonly defaultAdmin = {
     email: "admin",
@@ -46,14 +61,48 @@ export class AdminService {
     this.createDefaultAdmin();
   }
 
+
+
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    const { id, old_token } = refreshTokenDto;
+    const existUser = await this.tokenService.exists(id, old_token);
+    if (existUser) {
+      const data = await this.adminModel.findById(id);
+      this.tokenService.delete(id, old_token);
+      const tokenPayload = {
+        _id: data._id
+      };
+      const token = await this.generateToken(tokenPayload)
+      const expireAt = moment()
+        .add(1, 'day')
+        .toISOString();
+
+      await this.saveToken({
+        token,
+        expireAt,
+        uId: data._id,
+      });
+      return {
+        accessToken: token
+      }
+    }
+    else {
+      throw new BadRequestException()
+    }
+
+
+  }
+
   async signIn({ email, password }: CreateAdminDto): Promise<IRedableAdmin> {
     const admin = await this.findEmail(email);
 
     if (admin && (await bcrypt.compare(password, admin.password))) {
 
       const tokenPayload = {
-        _id: admin._id
+        _id: admin._id,
+        role:admin.role
       };
+      console.log(tokenPayload)
 
       const token = await this.generateToken(tokenPayload);
       const expireAt = moment()
@@ -87,10 +136,47 @@ export class AdminService {
     return await this.adminModel.findOne({ email }).exec();
   }
 
-  async getProfile(req : any){
-    const token = req.headers.authorization.slice(7);
-    const profile = await this.authService.verifyToken(token);
-    return await this.adminModel.findById(profile._id);
-
+  async allTeachers(req: any): Promise<ReadableUserDto[]> {
+    const tokenExists = this.checkedToken(req);
+    if (tokenExists) {
+      const teachers = await this.userService.getAllTeachers();
+      return plainToClass(ReadableUserDto, teachers, { strategy: "excludeAll" })
+    }
   }
+
+  async allStudents(req: any): Promise<ReadableUserDto[]>{
+    const tokenExists = this.checkedToken(req);
+    if (tokenExists) {
+      const students = await this.userService.getAllStudents();
+      return plainToClass(ReadableUserDto, students, { strategy: "excludeAll" })
+    }
+  }
+
+  async checkedToken(req:any){
+    const token = req.headers.authorization.slice(7);
+    return await this.authService.verifyToken(token);
+  }
+
+  async allGroups(req: any): Promise<IGroup[]>{
+    const tokenExists = this.checkedToken(req);
+    if (tokenExists) {
+      return await this.groupService.findAll();
+    }
+  }
+
+  async createGroup(req:any,createGroupDto:CreateGroupDto): Promise<IGroup>{
+    const tokenExists = this.checkedToken(req);
+    if (tokenExists) {
+      return await this.groupService.create(createGroupDto);
+    }
+  }
+
+  async updateGroup(req:any, updateGroupDto:UpdateGroupDto): Promise<IGroup>{
+    const tokenExists = this.checkedToken(req);
+    if (tokenExists) {
+      return await this.groupService.update(updateGroupDto);
+    }
+  }
+
+
 }

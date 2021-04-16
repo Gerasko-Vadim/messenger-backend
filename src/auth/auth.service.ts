@@ -18,6 +18,7 @@ import { SignInDto } from './dto/signIn.dto';
 import { ITokenPayload } from './interface/token-payload.interface';
 import { IReadableUser } from 'src/users/interface/readable-user.interface';
 import { userSensitiveFieldsEnum } from 'src/users/enums/protected-fields.enum';
+import { RefreshTokenDto } from 'src/token/dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -50,11 +51,7 @@ export class AuthService {
             if(user.isActive!== isActive.active){
                 throw new MethodNotAllowedException();
             }
-            const tokenPayload: ITokenPayload = {
-                _id:user._id,
-                isActive: user.isActive,
-                roles:user.role
-            };
+            const tokenPayload = this.genericTokenPayload(user);
     
             const token = await this.generateToken(tokenPayload);
             const expireAt = moment()
@@ -74,6 +71,14 @@ export class AuthService {
 
         throw new BadRequestException('Invalid credentials');
 
+    }
+
+    genericTokenPayload(user:IUsers):ITokenPayload{
+        return{
+            _id:user._id,
+            isActive: user.isActive,
+            roles:user.role
+        }
     }
 
     async confirm(token: string): Promise<IUsers> {
@@ -114,7 +119,7 @@ export class AuthService {
         // })
     }
 
-     async verifyToken(token): Promise<any> {
+     async verifyToken(token:string): Promise<any> {
         try {
             const data = this.jwtService.verify(token);
             const tokenExists = await this.tokenService.exists(data._id, token);
@@ -126,6 +131,34 @@ export class AuthService {
         } catch (error) {
             throw new UnauthorizedException();
         }
+    }
+
+    async refreshToken(refreshTokenDto: RefreshTokenDto) {
+        const {id , old_token} = refreshTokenDto;
+        const existUser = await this.tokenService.exists(id,old_token);
+        if (existUser){
+            const data = await this.usersService.find(id);
+            this.tokenService.delete(id,old_token);
+            const tokenPayload= this.genericTokenPayload(data)
+            const token = await this.generateToken(tokenPayload)
+            const expireAt = moment()
+            .add(1,'day')
+            .toISOString();
+    
+            await this.saveToken({
+                token,
+                expireAt,
+                uId:data._id,
+            });
+            return {
+                accessToken:token
+            }
+        }
+        else{
+             throw new BadRequestException()
+        }
+
+
     }
 
     private async generateToken(data: ITokenPayload, options?: SignOptions): Promise<string> {
