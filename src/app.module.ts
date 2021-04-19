@@ -21,7 +21,7 @@ dotenv.config();
   AuthModule,
   TokenModule,
   MongooseModule.forRoot(
-    process.env.MONGODB_WRITE_CONNECTION_STRING,
+    process.env.MONGODB,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true
