@@ -11,7 +11,6 @@ import { GroupsModule } from './groups/groups.module';
 
 
 import * as dotenv from "dotenv"
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { AppController } from './app.controller';
 
 
