@@ -23,7 +23,7 @@ const uri = process.env.MONGODB || 'mongodb+srv://vadim:12345adidas99@cluster0.2
   AuthModule,
   TokenModule,
   MongooseModule.forRoot(
-    uri,
+    process.env.MONGODB,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true
