@@ -16,6 +16,7 @@ import { AppController } from './app.controller';
 
 
 dotenv.config();
+const uri = process.env.MONGODB || 'mongodb+srv://vadim:12345adidas99@cluster0.2exxq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 @Module({
   imports: [
   UsersModule,
@@ -23,7 +24,7 @@ dotenv.config();
   AuthModule,
   TokenModule,
   MongooseModule.forRoot(
-    process.env.MONGODB,
+    uri,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true
