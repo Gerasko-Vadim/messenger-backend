@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateGroupDto } from 'src/groups/dto/create-group.dto';
 import { UpdateGroupDto } from 'src/groups/dto/update-group.dto';
 import { RefreshTokenDto } from 'src/token/dto/refresh-token.dto';
+import { ChangeUser } from 'src/users/dto/change-user-status.dto';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 
@@ -22,6 +23,12 @@ export class AdminController {
   @Get('teachers')
   getAllTeachers(@Request() req) {
     return this.adminService.allTeachers(req);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('change-users')
+  changeIsActive(@Request() req, @Body() changeUser: ChangeUser) {
+    return this.adminService.changeIsActive(req,changeUser);
   }
 
   @UseGuards(AuthGuard('jwt'))

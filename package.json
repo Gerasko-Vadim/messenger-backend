@@ -36,6 +36,7 @@
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "dotenv": "^8.2.0",
+    "heroku": "^7.52.0",
     "lodash": "^4.17.21",
     "mailgun-js": "^0.22.0",
     "moment": "^2.29.1",

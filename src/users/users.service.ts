@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { IUsers } from './interface/users.interface';
 import * as _ from 'lodash';
 import { role } from './enums/role.enum';
+import { ChangeUser } from './dto/change-user-status.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +38,13 @@ export class UsersService {
     }
     async findEmail(email: string): Promise<IUsers> {
         return await this.userModel.findOne({ email }).exec();
+    }
+
+    async changeUser(changeUser:ChangeUser): Promise<IUsers>{
+        const user = await this.find(changeUser.id);
+        user.isActive = changeUser.isActive;
+        return user.save()
+        
     }
 
 

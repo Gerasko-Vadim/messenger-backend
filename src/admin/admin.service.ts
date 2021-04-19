@@ -27,6 +27,7 @@ import { IGroup } from 'src/groups/interface/group.interface';
 import { GroupsService } from 'src/groups/groups.service';
 import { CreateGroupDto } from 'src/groups/dto/create-group.dto';
 import { UpdateGroupDto } from 'src/groups/dto/update-group.dto';
+import { ChangeUser } from 'src/users/dto/change-user-status.dto';
 
 @Injectable()
 export class AdminService {
@@ -175,6 +176,14 @@ export class AdminService {
     const tokenExists = this.checkedToken(req);
     if (tokenExists) {
       return await this.groupService.update(updateGroupDto);
+    }
+  }
+
+  async changeIsActive (req:any, changeUser:ChangeUser) : Promise<ReadableUserDto>{
+    const tokenExists = this.checkedToken(req);
+    if (tokenExists) {
+      const user = await this.userService.changeUser(changeUser)
+      return plainToClass(ReadableUserDto, user, { strategy: "excludeAll" })
     }
   }
 
