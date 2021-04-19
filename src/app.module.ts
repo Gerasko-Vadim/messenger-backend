@@ -14,8 +14,9 @@ import * as dotenv from "dotenv"
 import { AppController } from './app.controller';
 
 
-dotenv.config();
-const uri = process.env.MONGODB || 'mongodb+srv://vadim:12345adidas99@cluster0.2exxq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+dotenv.config({path:'.env.development'})
+console.log(process.env.MONGODB)
+// const uri = process.env.MONGODB || 'mongodb+srv://vadim:12345adidas99@cluster0.2exxq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 @Module({
   imports: [
   UsersModule,
