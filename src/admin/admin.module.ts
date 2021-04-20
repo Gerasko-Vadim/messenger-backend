@@ -23,7 +23,7 @@ import { GroupsModule } from 'src/groups/groups.module';
   configModule,
   PassportModule.register({ defaultStrategy: 'jwt' }),
   JwtModule.register({
-    secret: process.env.JWT_SECRET_KEY,
+    secret: 'secret',
     signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
   }),
 ]
