@@ -30,6 +30,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') }
     }),
     inject: [ConfigService],
+  })
 ]
 })
 export class AdminModule { }
