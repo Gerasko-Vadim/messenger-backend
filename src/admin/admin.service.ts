@@ -47,18 +47,17 @@ export class AdminService {
 
   async createDefaultAdmin(): Promise<IAdmin> {
     const isAdmin = await this.adminModel.find();
-
     if (!isAdmin) {
       const saltRounds = 10;
       const salt = await bcrypt.genSalt(saltRounds);
       const hash = await bcrypt.hash(this.defaultAdmin.password, salt);
-
+ 
       const createdAdmin = new this.adminModel(_.assignIn(this.defaultAdmin, { password: hash }));
       return await createdAdmin.save();
     }
 
   }
-  onApplicationBootstrap() {
+  async onApplicationBootstrap() {
     this.createDefaultAdmin();
   }
 
