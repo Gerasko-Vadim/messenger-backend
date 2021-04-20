@@ -93,7 +93,7 @@ export class AdminService {
 
   }
 
-  async signIn({ email, password }: CreateAdminDto): Promise<IRedableAdmin> {
+  async signInService({ email, password }: CreateAdminDto): Promise<IRedableAdmin> {
     const admin = await this.findEmail(email);
 
     if (admin && (await bcrypt.compare(password, admin.password))) {
@@ -102,7 +102,6 @@ export class AdminService {
         _id: admin._id,
         role:admin.role
       };
-      console.log(tokenPayload)
 
       const token = await this.generateToken(tokenPayload);
       const expireAt = moment()

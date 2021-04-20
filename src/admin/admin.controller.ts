@@ -16,7 +16,7 @@ export class AdminController {
 
   @Post('signIn')
   signIn(@Body() createAdminDto: CreateAdminDto) {
-    return this.adminService.signIn(createAdminDto);
+    return this.adminService.signInService(createAdminDto);
   }
 
   @UseGuards(AuthGuard('jwt'))
