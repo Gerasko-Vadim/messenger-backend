@@ -11,6 +11,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { GroupsModule } from 'src/groups/groups.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   controllers: [AdminController,],
@@ -22,10 +23,13 @@ import { GroupsModule } from 'src/groups/groups.module';
   GroupsModule,
   configModule,
   PassportModule.register({ defaultStrategy: 'jwt' }),
-  JwtModule.register({
-    secret: 'secret',
-    signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
-  }),
+  JwtModule.registerAsync({
+    imports: [ConfigModule],
+    useFactory: async (configService: ConfigService) => ({
+      secret: 'secret',
+      signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') }
+    }),
+    inject: [ConfigService],
 ]
 })
 export class AdminModule { }
