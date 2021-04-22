@@ -18,4 +18,6 @@ export class ReadableUserDto {
     readonly isActive: string;
     @Expose()
     readonly role: string;
+    @Expose()
+    readonly avatar: string;
 }
