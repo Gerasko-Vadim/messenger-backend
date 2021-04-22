@@ -137,23 +137,19 @@ export class AdminService {
   }
 
   async allTeachers(req: any): Promise<ReadableUserDto[]> {
-    console.log(req,"vdsvds")
     const tokenExists = this.checkedToken(req);
-    console.log(tokenExists,"vdsvds")
     if (tokenExists) {
       const teachers = await this.userService.getAllTeachers();
       return plainToClass(ReadableUserDto, teachers, { strategy: "excludeAll" })
     }
   }
 
-  async allStudents(req: any){
-    console.log("vdsvds")
+  async allStudents(req: any): Promise<ReadableUserDto[]>{
     const tokenExists = await this.checkedToken(req);
     if (tokenExists) {
       const students = await this.userService.getAllStudents();
       return plainToClass(ReadableUserDto, students, { strategy: "excludeAll" })
     }
-    return "ok"
   }
 
   async checkedToken(req:any){
