@@ -10,7 +10,7 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AdminService) { }
 
 
 
@@ -19,47 +19,47 @@ export class AdminController {
     return this.adminService.signInService(createAdminDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+ 
   @Get('teachers')
   getAllTeachers(@Request() req) {
     return this.adminService.allTeachers(req);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+ 
   @Post('change-users')
   changeIsActive(@Request() req, @Body() changeUser: ChangeUser) {
-    return this.adminService.changeIsActive(req,changeUser);
+    return this.adminService.changeIsActive(req, changeUser);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('students')
-  getAllStudents(@Request() req) {
+
+  @Get('/students')
+   getAllStudents(@Request() req) {
     return this.adminService.allStudents(req);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+ 
   @Get('groups')
   getAllGroup(@Request() req) {
     return this.adminService.allGroups(req);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+
   @Post('groups')
-  createGroup(@Request() req ,@Body() createGroupDto:CreateGroupDto) {
-    return this.adminService.createGroup(req,createGroupDto);
+  createGroup(@Request() req, @Body() createGroupDto: CreateGroupDto) {
+    return this.adminService.createGroup(req, createGroupDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+
   @Patch('groups')
-  updateGroup(@Request() req ,@Body() updateGroupDto:UpdateGroupDto) {
-    return this.adminService.updateGroup(req,updateGroupDto);
+  updateGroup(@Request() req, @Body() updateGroupDto: UpdateGroupDto) {
+    return this.adminService.updateGroup(req, updateGroupDto);
   }
 
   @Post('refresh')
-  refresh(@Body()refreshTokenDto:RefreshTokenDto){
+  refresh(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.adminService.refreshToken(refreshTokenDto)
   }
 
-  
+
 
 }

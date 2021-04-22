@@ -95,7 +95,7 @@ export class AdminService {
 
   async signInService({ email, password }: CreateAdminDto): Promise<IRedableAdmin> {
     const admin = await this.findEmail(email);
-
+  
     if (admin && (await bcrypt.compare(password, admin.password))) {
 
       const tokenPayload = {
@@ -125,6 +125,7 @@ export class AdminService {
   private async generateToken(data, options?: JwtSignOptions): Promise<string> {
     return this.jwtService.sign(data, options);
   }
+
   private async saveToken(createAdminTokenDto: CreateTokenDto) {
     const userToken = await this.tokenService.create(createAdminTokenDto);
 
@@ -136,24 +137,28 @@ export class AdminService {
   }
 
   async allTeachers(req: any): Promise<ReadableUserDto[]> {
+    console.log(req,"vdsvds")
     const tokenExists = this.checkedToken(req);
+    console.log(tokenExists,"vdsvds")
     if (tokenExists) {
       const teachers = await this.userService.getAllTeachers();
       return plainToClass(ReadableUserDto, teachers, { strategy: "excludeAll" })
     }
   }
 
-  async allStudents(req: any): Promise<ReadableUserDto[]>{
-    const tokenExists = this.checkedToken(req);
+  async allStudents(req: any){
+    console.log("vdsvds")
+    const tokenExists = await this.checkedToken(req);
     if (tokenExists) {
       const students = await this.userService.getAllStudents();
       return plainToClass(ReadableUserDto, students, { strategy: "excludeAll" })
     }
+    return "ok"
   }
 
   async checkedToken(req:any){
     const token = req.headers.authorization.slice(7);
-    return await this.authService.verifyToken(token);
+    return await this.authService.verifyToken(token)
   }
 
   async allGroups(req: any): Promise<IGroup[]>{
