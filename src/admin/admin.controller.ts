@@ -32,7 +32,7 @@ export class AdminController {
   }
 
 
-  @Get('/students')
+  @Get('students')
    getAllStudents(@Request() req) {
     return this.adminService.allStudents(req);
   }
