@@ -152,6 +152,14 @@ export class AdminService {
     }
   }
 
+  async allStudentsGroup(req,group:string): Promise<ReadableUserDto[]>{
+    const tokenExists =  this.checkedToken(req);
+    if (tokenExists) {
+      const students = await this.userService.findByGroup(group);
+      return plainToClass(ReadableUserDto, students, { strategy: "excludeAll" })
+    }
+  }
+
   async checkedToken(req:any){
     const token = req.headers.authorization.slice(7);
     return await this.authService.verifyToken(token)

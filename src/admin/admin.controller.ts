@@ -37,6 +37,11 @@ export class AdminController {
     return this.adminService.allStudents(req);
   }
 
+  @Get('students:group')
+  finedGroupStudents(@Param('group') group: string ,@Request() req) {
+   return this.adminService.allStudentsGroup(req,group);
+ }
+
  
   @Get('groups')
   getAllGroup(@Request() req) {

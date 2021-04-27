@@ -29,6 +29,10 @@ export class UsersService {
         return await this.userModel.findById(id).exec();
     }
 
+    async findByGroup (group:string) : Promise<IUsers[]>{
+        return await this.userModel.find({group})
+    }
+
     async getAllTeachers (): Promise<IUsers[]>{
         return await this.userModel.find({role: role.teacher})
     }
