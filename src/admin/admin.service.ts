@@ -152,7 +152,7 @@ export class AdminService {
     }
   }
 
-  async allStudentsGroup(req,group:string): Promise<ReadableUserDto[]>{
+  async allStudentsGroup(req:any,group:string): Promise<ReadableUserDto[]>{
     const tokenExists =  this.checkedToken(req);
     if (tokenExists) {
       const students = await this.userService.findByGroup(group);

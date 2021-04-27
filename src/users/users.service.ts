@@ -29,26 +29,26 @@ export class UsersService {
         return await this.userModel.findById(id).exec();
     }
 
-    async findByGroup (group:string) : Promise<IUsers[]>{
-        return await this.userModel.find({group:group}).exec()
+    async findByGroup(group: string): Promise<IUsers[]> {
+        return await this.userModel.find({ group })
     }
 
-    async getAllTeachers (): Promise<IUsers[]>{
-        return await this.userModel.find({role: role.teacher})
+    async getAllTeachers(): Promise<IUsers[]> {
+        return await this.userModel.find({ role: role.teacher })
     }
 
-    async getAllStudents (): Promise<IUsers[]>{
-        return await this.userModel.find({role: role.student})
+    async getAllStudents(): Promise<IUsers[]> {
+        return await this.userModel.find({ role: role.student })
     }
     async findEmail(email: string): Promise<IUsers> {
         return await this.userModel.findOne({ email }).exec();
     }
 
-    async changeUser(changeUser:ChangeUser): Promise<IUsers>{
+    async changeUser(changeUser: ChangeUser): Promise<IUsers> {
         const user = await this.find(changeUser.id);
         user.isActive = changeUser.isActive;
         return user.save()
-        
+
     }
 
 
