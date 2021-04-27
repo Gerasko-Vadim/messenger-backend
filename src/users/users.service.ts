@@ -30,7 +30,7 @@ export class UsersService {
     }
 
     async findByGroup (group:string) : Promise<IUsers[]>{
-        return await this.userModel.find({group})
+        return await this.userModel.find({group:group}).exec()
     }
 
     async getAllTeachers (): Promise<IUsers[]>{
