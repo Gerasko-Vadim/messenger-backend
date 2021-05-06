@@ -7,7 +7,7 @@ export class GroupsController {
     constructor(private readonly groupsService: GroupsService) { }
 
     @Get()
-    async signInUser(): Promise<IGroup[]>{
+    async getAllGroups(): Promise<IGroup[]>{
         return this.groupsService.findAll()
     }
 }
