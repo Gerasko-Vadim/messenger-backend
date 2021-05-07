@@ -18,7 +18,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [AdminService],
   imports:[MongooseModule.forFeature([{ name: Admin.name, schema: AdminSchema }]),
   TokenModule,
-  AuthModule,
   UsersModule,
   GroupsModule,
   configModule,

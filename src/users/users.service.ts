@@ -9,10 +9,15 @@ import { IUsers } from './interface/users.interface';
 import * as _ from 'lodash';
 import { role } from './enums/role.enum';
 import { ChangeUser } from './dto/change-user-status.dto';
+import { AuthService } from 'src/auth/auth.service';
+import { TokenService } from 'src/token/token.service';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(Users.name) private userModel: Model<UsersDocument>) { }
+    constructor(
+        @InjectModel(Users.name) private userModel: Model<UsersDocument>,
+        private readonly tokenService:TokenService
+    ) { }
 
     async getAll(): Promise<Users[]> {
         return this.userModel.find().exec()
@@ -31,6 +36,14 @@ export class UsersService {
 
     async findByGroup(group: string): Promise<IUsers[]> {
         return await this.userModel.find({ group })
+    }
+
+    async findByToken (req:any): Promise<IUsers>{
+        const token = req.headers.authorization.slice(7);
+        const tokenExist= await this.tokenService.verifyToken(token)
+        if(tokenExist){
+            return this.find(tokenExist._id)
+        }
     }
 
     async getAllTeachers(): Promise<IUsers[]> {

@@ -82,7 +82,7 @@ export class AuthService {
     }
 
     async confirm(token: string): Promise<IUsers> {
-        const data = await this.verifyToken(token);
+        const data = await this.tokenService.verifyToken(token);
         const student = await this.usersService.find(data._id);
         await this.tokenService.delete(data._id, token);
 
@@ -119,22 +119,7 @@ export class AuthService {
         // })
     }
 
-     async verifyToken(token:string): Promise<any> {
-        try {
-            const data = this.jwtService.verify(token);
-            const tokenExists = await this.tokenService.exists(data._id, token);
 
-            if (tokenExists) {
-                return data;
-            }
-            else{
-                throw new UnauthorizedException();
-            }
-            
-        } catch (error) {
-            throw new UnauthorizedException();
-        }
-    }
 
     async refreshToken(refreshTokenDto: RefreshTokenDto) {
         const {id , old_token} = refreshTokenDto;

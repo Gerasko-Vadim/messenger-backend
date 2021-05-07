@@ -36,9 +36,9 @@ export class AdminService {
     private adminModel: Model<AdminDocument>,
     private readonly jwtService: JwtService,
     private readonly tokenService: TokenService,
-    private readonly authService: AuthService,
     private readonly userService: UsersService,
     private readonly groupService: GroupsService
+   
   ) { }
   private readonly defaultAdmin = {
     email: "admin",
@@ -162,7 +162,7 @@ export class AdminService {
 
   async checkedToken(req:any){
     const token = req.headers.authorization.slice(7);
-    return await this.authService.verifyToken(token)
+    return await this.tokenService.verifyToken(token)
   }
 
   async allGroups(req: any): Promise<IGroup[]>{
