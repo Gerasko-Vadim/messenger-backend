@@ -39,9 +39,9 @@ export class UsersService {
 
     async findByToken (req:any): Promise<IUsers>{
         const token = req.headers.authorization.slice(7);
-        const tokenExist= this.tokenService.verifyToken(token)
+        const tokenExist= await this.tokenService.verifyToken(token)
         if(tokenExist){
-            return this.find(tokenExist._id)
+            return await this.find(tokenExist._id)
         }
     }
 
