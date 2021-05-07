@@ -9,7 +9,6 @@ import { IUsers } from './interface/users.interface';
 import * as _ from 'lodash';
 import { role } from './enums/role.enum';
 import { ChangeUser } from './dto/change-user-status.dto';
-import { AuthService } from 'src/auth/auth.service';
 import { TokenService } from 'src/token/token.service';
 
 @Injectable()
