@@ -39,13 +39,10 @@ export class UsersService {
 
     async findByToken(req: any): Promise<IUsers> {
         const token = req.headers.authorization.slice(7);
-        const tokenExist = await this.tokenService.verifyToken(token)
-        console.log(tokenExist)
-        if(tokenExist){
-            const user = await this.find(tokenExist._id)
-            return user;
-        }
-  
+        const { _id } = await this.tokenService.verifyToken(token)
+        return this.find(_id);
+
+
     }
 
     async getAllTeachers(): Promise<IUsers[]> {
