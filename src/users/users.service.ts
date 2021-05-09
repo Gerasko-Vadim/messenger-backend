@@ -15,7 +15,7 @@ import { TokenService } from 'src/token/token.service';
 export class UsersService {
     constructor(
         @InjectModel(Users.name) private userModel: Model<UsersDocument>,
-        private readonly tokenService:TokenService
+        private readonly tokenService: TokenService
     ) { }
 
     async getAll(): Promise<Users[]> {
@@ -37,12 +37,10 @@ export class UsersService {
         return await this.userModel.find({ group })
     }
 
-    async findByToken (req:any): Promise<IUsers>{
+    async findByToken(req: any): Promise<IUsers> {
         const token = req.headers.authorization.slice(7);
         const tokenExist = await this.tokenService.verifyToken(token)
-        if(tokenExist){
-            return  this.find(tokenExist._id)
-        }
+        return this.find(tokenExist._id)
     }
 
     async getAllTeachers(): Promise<IUsers[]> {
