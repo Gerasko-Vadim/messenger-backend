@@ -43,7 +43,7 @@ export class UsersService {
         const token = req.headers.authorization.slice(7);
         const tokenExists = await this.tokenService.verifyToken(token)
         if(tokenExists){
-            return this.find(id)
+            return await this.find(id)
         }
 
 
