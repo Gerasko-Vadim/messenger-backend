@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { role } from './enums/role.enum';
 import { ChangeUser } from './dto/change-user-status.dto';
 import { TokenService } from 'src/token/token.service';
+import { GetUserDto } from './dto/get-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,10 +38,13 @@ export class UsersService {
         return await this.userModel.find({ group })
     }
 
-    async findByToken(req: any): Promise<IUsers> {
+    async findByToken(req: any,getUserDto:GetUserDto): Promise<IUsers | null> {
         const token = req.headers.authorization.slice(7);
-        const { _id } = await this.tokenService.verifyToken(token)
-        return this.find(_id);
+        const tokenExists = await this.tokenService.verifyToken(token)
+        if(tokenExists){
+            return this.find(getUserDto.id)
+        }
+
 
 
     }

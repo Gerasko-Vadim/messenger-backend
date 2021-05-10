@@ -161,6 +161,7 @@ export class AdminService {
   }
 
   async checkedToken(req:any){
+    console.log(req.headers)
     const token = req.headers.authorization.slice(7);
     return await this.tokenService.verifyToken(token)
   }
