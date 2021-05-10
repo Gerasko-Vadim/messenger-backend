@@ -39,17 +39,15 @@ export class UsersService {
     }
 
     async checkedToken(req:any){
-        console.log(req.headers)
         const token = req.headers.authorization.slice(7);
         return await this.tokenService.verifyToken(token)
       }
 
     async findByToken(req: any,id:string): Promise<IUsers | null> {
-        console.log(id)
-        const token = req.headers.authorization.slice(7);
+        const userId = id.replace(/"/g,"")
         const tokenExists =  this.checkedToken(req)
         if(tokenExists){
-            return await this.find(id)
+            return await this.find(userId)
         }
 
 
