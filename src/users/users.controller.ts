@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
 import { GetUserDto } from './dto/get-users.dto';
 import { UsersService } from './users.service';
 
@@ -7,9 +7,9 @@ import { UsersService } from './users.service';
 export class UsersController {
     constructor(private readonly userService: UsersService) { }
 
-    @Get()
-    findOneUser(@Request() req, @Body() getUserDto:GetUserDto) {
-      return this.userService.findByToken(req,getUserDto);
+    @Get('users/:id')
+    findOneUser(@Request() req, @Param('id') id: string) {
+      return this.userService.findByToken(req,id);
     }
 
 }

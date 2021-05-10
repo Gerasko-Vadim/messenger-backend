@@ -38,11 +38,11 @@ export class UsersService {
         return await this.userModel.find({ group })
     }
 
-    async findByToken(req: any,getUserDto:GetUserDto): Promise<IUsers | null> {
+    async findByToken(req: any,id:string): Promise<IUsers | null> {
         const token = req.headers.authorization.slice(7);
         const tokenExists = await this.tokenService.verifyToken(token)
         if(tokenExists){
-            return this.find(getUserDto.id)
+            return this.find(id)
         }
 
 
