@@ -39,6 +39,7 @@ export class UsersService {
     }
 
     async findByToken(req: any,id:string): Promise<IUsers | null> {
+        console.log(id)
         const token = req.headers.authorization.slice(7);
         const tokenExists = await this.tokenService.verifyToken(token)
         if(tokenExists){

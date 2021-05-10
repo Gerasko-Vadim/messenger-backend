@@ -7,7 +7,7 @@ import { UsersService } from './users.service';
 export class UsersController {
     constructor(private readonly userService: UsersService) { }
 
-    @Get('users/:id')
+    @Get('/:id')
     findOneUser(@Request() req, @Param('id') id: string) {
       return this.userService.findByToken(req,id);
     }
