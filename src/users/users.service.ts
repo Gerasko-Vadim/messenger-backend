@@ -38,10 +38,16 @@ export class UsersService {
         return await this.userModel.find({ group })
     }
 
+    async checkedToken(req:any){
+        console.log(req.headers)
+        const token = req.headers.authorization.slice(7);
+        return await this.tokenService.verifyToken(token)
+      }
+
     async findByToken(req: any,id:string): Promise<IUsers | null> {
         console.log(id)
         const token = req.headers.authorization.slice(7);
-        const tokenExists = await this.tokenService.verifyToken(token)
+        const tokenExists =  this.checkedToken(req)
         if(tokenExists){
             return await this.find(id)
         }
