@@ -17,7 +17,7 @@ export class UsersController {
     @Post('/update')
     @FormDataRequest()
     updateUsers(@Request() req, @Body() updateUser:UpdateUser) {
-        return this.userService.updateUsers(updateUser)
+        return this.userService.updateUsers(req,updateUser)
         
     }
 

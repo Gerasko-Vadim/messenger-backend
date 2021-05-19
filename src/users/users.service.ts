@@ -12,7 +12,8 @@ import { ChangeUser } from './dto/change-user-status.dto';
 import { TokenService } from 'src/token/token.service';
 import { GetUserDto } from './dto/get-users.dto';
 import { UpdateUser } from './dto/update-user.dto';
-import * as dotenv from "dotenv"
+import * as fs from "fs-extra"
+import { IReadableUser } from './interface/readable-user.interface';
 
 @Injectable()
 export class UsersService {
@@ -40,15 +41,15 @@ export class UsersService {
         return await this.userModel.find({ group })
     }
 
-    async checkedToken(req:any){
+    async checkedToken(req: any) {
         const token = req.headers.authorization.slice(7);
         return await this.tokenService.verifyToken(token)
-      }
+    }
 
-    async findByToken(req: any,id:string): Promise<IUsers | null> {
-        const userId = id.replace(/"/g,"")
-        const tokenExists =  this.checkedToken(req)
-        if(tokenExists){
+    async findByToken(req: any, id: string): Promise<IUsers | null> {
+        const userId = id.replace(/"/g, "")
+        const tokenExists = this.checkedToken(req)
+        if (tokenExists) {
             return await this.find(userId)
         }
 
@@ -74,18 +75,29 @@ export class UsersService {
 
     }
 
-    async updateUsers(updateUser:UpdateUser){
-        const {id, avatar, ...data} = updateUser;
+    async updateUsers(req: any, updateUser: UpdateUser) {
+        const { id, avatar, ...data } = updateUser;
         const user = await this.find(id);
-        if(avatar){
-            return await this.userModel.findByIdAndUpdate(id,{
-                ...data,
-                avatar:`${process.env.FE_APP_URL}/photos/${avatar.filename}`
+        const tokenExists = this.checkedToken(req)
+        console.log(tokenExists)
+        const fileName = user.avatar.slice(42);
+        if (tokenExists) {
+            if (avatar) {
+                if (avatar.filename !== fileName) {
+                    fs.removeSync(`./photos/${fileName}`)
+                }
+                return await this.userModel.findByIdAndUpdate(id, {
+                    ...data,
+                    avatar: `${process.env.FE_APP_URL}/photos/${avatar.filename}`
 
-            },{upsert: true})
-        } 
-        
+                }, { upsert: true })
+            }
+            return await this.userModel.findByIdAndUpdate(id, data, { upsert: true })
+
+        }
     }
 
 
+
 }
+//42
