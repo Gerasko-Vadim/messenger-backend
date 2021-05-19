@@ -12,6 +12,9 @@ import { GroupsModule } from './groups/groups.module';
 
 import * as dotenv from "dotenv"
 import { AppController } from './app.controller';
+import { ServeStaticModule } from '@nestjs/serve-static/dist/serve-static.module'
+import { join } from 'path';
+import { path } from "app-root-path"
 
 
 dotenv.config({path:'.env.development'})
@@ -22,6 +25,10 @@ dotenv.config({path:'.env.development'})
   configModule,
   AuthModule,
   TokenModule,
+  ServeStaticModule.forRoot({ 
+    rootPath: `${path}/photos`,
+    serveRoot:'/photos'
+}), 
   MongooseModule.forRoot(
     uri,
     {

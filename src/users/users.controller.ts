@@ -1,5 +1,8 @@
-import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Request, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FormDataRequest } from 'nestjs-form-data';
 import { GetUserDto } from './dto/get-users.dto';
+import { UpdateUser } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 
@@ -10,6 +13,12 @@ export class UsersController {
     @Get('/:id')
     findOneUser(@Request() req, @Param('id') id: string) {
       return this.userService.findByToken(req,id);
+    }
+    @Post('/update')
+    @FormDataRequest()
+    updateUsers(@Request() req, @Body() updateUser:UpdateUser) {
+        return this.userService.updateUsers(updateUser)
+        
     }
 
 }

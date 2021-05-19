@@ -11,6 +11,8 @@ import { role } from './enums/role.enum';
 import { ChangeUser } from './dto/change-user-status.dto';
 import { TokenService } from 'src/token/token.service';
 import { GetUserDto } from './dto/get-users.dto';
+import { UpdateUser } from './dto/update-user.dto';
+import * as dotenv from "dotenv"
 
 @Injectable()
 export class UsersService {
@@ -70,6 +72,19 @@ export class UsersService {
         user.isActive = changeUser.isActive;
         return user.save()
 
+    }
+
+    async updateUsers(updateUser:UpdateUser){
+        const {id, avatar, ...data} = updateUser;
+        const user = await this.find(id);
+        if(avatar){
+            return await this.userModel.findByIdAndUpdate(id,{
+                ...data,
+                avatar:`${process.env.FE_APP_URL}/photos/${avatar.filename}`
+
+            },{upsert: true})
+        } 
+        
     }
 
 
