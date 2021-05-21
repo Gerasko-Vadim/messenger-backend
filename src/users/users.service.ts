@@ -80,14 +80,13 @@ export class UsersService {
     }
 
     async updateUsers(req: any, updateUser: UpdateUser) {
-        console.log(updateUser)
         const {  avatar, ...data } = updateUser;
         const tokenExists = await this.checkedToken(req)
         const user = await this.find(tokenExists._id);
-        console.log(tokenExists._id)
-        const fileName = user.avatar.slice(42);
+        const fileName = user.avatar !== null && user.avatar.slice(42);
         if (tokenExists) {
             if (avatar) {
+                
                 if (avatar.filename !== fileName) {
                     fs.removeSync(`./photos/${fileName}`)
                 }
