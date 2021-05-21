@@ -16,6 +16,7 @@ import * as fs from "fs-extra"
 import { IReadableUser } from './interface/readable-user.interface';
 import { IUserToken } from 'src/token/interface/token-interface';
 import { IVerifyToken } from "../auth/interface/verifyToken.interface"
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -98,6 +99,19 @@ export class UsersService {
             }
             return await this.userModel.findByIdAndUpdate(tokenExists._id, data, { upsert: true })
 
+        }
+    }
+
+    async changePassword(req:any,changePasswordDto:ChangePasswordDto){
+        const tokenExists = await this.checkedToken(req)
+        const {old_password,new_password} = changePasswordDto;
+        if(tokenExists){
+            const user = await this.find(tokenExists._id)
+            if(user && (await bcrypt.compare(old_password, user.password))){
+                user.password = new_password;
+                return user.save()
+            }
+            
         }
     }
 

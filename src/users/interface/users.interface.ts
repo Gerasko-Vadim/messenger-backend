@@ -7,7 +7,7 @@ export interface IUsers extends Document {
     readonly patronymic: string;
     readonly email: string;
     readonly group: string;
-    readonly password: string;
+    password: string;
     isActive: string
     role:string
 }
