@@ -14,6 +14,8 @@ import { GetUserDto } from './dto/get-users.dto';
 import { UpdateUser } from './dto/update-user.dto';
 import * as fs from "fs-extra"
 import { IReadableUser } from './interface/readable-user.interface';
+import { IUserToken } from 'src/token/interface/token-interface';
+import { IVerifyToken } from "../auth/interface/verifyToken.interface"
 
 @Injectable()
 export class UsersService {
@@ -41,8 +43,9 @@ export class UsersService {
         return await this.userModel.find({ group })
     }
 
-    async checkedToken(req: any) {
-        const token = req.headers.authorization.slice(7);
+    async checkedToken(req: any): Promise<IVerifyToken>  {
+        const getToken = req.headers.authorization.replace('Bearer','').trim();
+        const token = getToken.replace(/\"/g,'');
         return await this.tokenService.verifyToken(token)
     }
 
@@ -76,23 +79,24 @@ export class UsersService {
     }
 
     async updateUsers(req: any, updateUser: UpdateUser) {
-        const { id, avatar, ...data } = updateUser;
-        const user = await this.find(id);
-        const tokenExists = this.checkedToken(req)
-        console.log(tokenExists)
+        console.log(updateUser)
+        const {  avatar, ...data } = updateUser;
+        const tokenExists = await this.checkedToken(req)
+        const user = await this.find(tokenExists._id);
+        console.log(tokenExists._id)
         const fileName = user.avatar.slice(42);
         if (tokenExists) {
             if (avatar) {
                 if (avatar.filename !== fileName) {
                     fs.removeSync(`./photos/${fileName}`)
                 }
-                return await this.userModel.findByIdAndUpdate(id, {
+                return await this.userModel.findByIdAndUpdate(tokenExists._id, {
                     ...data,
                     avatar: `${process.env.FE_APP_URL}/photos/${avatar.filename}`
 
                 }, { upsert: true })
             }
-            return await this.userModel.findByIdAndUpdate(id, data, { upsert: true })
+            return await this.userModel.findByIdAndUpdate(tokenExists._id, data, { upsert: true })
 
         }
     }
