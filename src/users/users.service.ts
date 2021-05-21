@@ -108,7 +108,10 @@ export class UsersService {
         if(tokenExists){
             const user = await this.find(tokenExists._id)
             if(user && (await bcrypt.compare(old_password, user.password))){
-                user.password = new_password;
+                const saltRounds = 10;
+                const salt = await bcrypt.genSalt(saltRounds);
+                const hash = await bcrypt.hash(new_password, salt);
+                user.password = hash;
                 return user.save()
             }
             
