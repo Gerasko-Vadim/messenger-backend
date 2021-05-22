@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -112,6 +112,9 @@ export class UsersService {
                 const hash = await bcrypt.hash(new_password, salt);
                 user.password = hash;
                 return user.save()
+            }
+            else{
+                throw new NotFoundException(`Пароли не совпадают`)
             }
             
         }
