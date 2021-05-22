@@ -50,7 +50,7 @@ export class UsersService {
         return await this.tokenService.verifyToken(token)
     }
 
-    async findByToken(req: any, id: string): Promise<IUsers | null> {
+    async findByToken(req: any): Promise<IUsers | null> {
         const tokenExists = await this.checkedToken(req)
         if (tokenExists) {
             return await this.find(tokenExists._id)
