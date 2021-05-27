@@ -1,0 +1,32 @@
+version: '3.7'
+# all the containers have to declare inside services
+services:
+
+  redis:
+    # image name
+    image: redis:latest
+    # container name
+    container_name: redis
+    # execute the command once start redis container
+    command: [
+        "redis-server",
+        "--bind",
+        "redis",
+        "--port",
+        "6379"
+    ]
+    # redis port, this is take value from env file
+    ports:
+      - '5432:5432'
+      # application network, each container for a service joins this network
+    networks:
+      - nest-chat-network
+
+  #Docker Networks
+networks:
+  # All container connect in a network
+  nest-chat-network:
+    driver: bridge
+# save (persist) data
+volumes:
+  red_data: {}

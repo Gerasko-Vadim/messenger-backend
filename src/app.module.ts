@@ -15,6 +15,11 @@ import { AppController } from './app.controller';
 import { ServeStaticModule } from '@nestjs/serve-static/dist/serve-static.module'
 import { join } from 'path';
 import { path } from "app-root-path"
+import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
+import { ChatGroupModule } from './chat-group/chat-group.module';
+import { NewsService } from './news/news.service';
+import { NewsModule } from './news/news.module';
 
 
 dotenv.config({path:'.env.development'})
@@ -38,7 +43,10 @@ dotenv.config({path:'.env.development'})
   ),
   AdminModule,
   GroupsModule,
+  ChatModule,
+  ChatGroupModule,
+  NewsModule
  ],
- controllers:[AppController]
+ controllers:[AppController],
 })
 export class AppModule {}
