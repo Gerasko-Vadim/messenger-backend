@@ -5,5 +5,4 @@ export interface IChatGroup {
 
     readonly group: string;
 
-    readonly roomId: string;
 }

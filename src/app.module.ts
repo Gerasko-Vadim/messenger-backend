@@ -20,6 +20,9 @@ import { ChatModule } from './chat/chat.module';
 import { ChatGroupModule } from './chat-group/chat-group.module';
 import { NewsService } from './news/news.service';
 import { NewsModule } from './news/news.module';
+import { MessegesService } from './messeges/messeges.service';
+import { MessegesModule } from './messeges/messeges.module';
+
 
 
 dotenv.config({path:'.env.development'})
@@ -45,8 +48,10 @@ dotenv.config({path:'.env.development'})
   GroupsModule,
   ChatModule,
   ChatGroupModule,
-  NewsModule
+  NewsModule,
+  MessegesModule,
  ],
  controllers:[AppController],
+ providers: [MessegesService],
 })
 export class AppModule {}

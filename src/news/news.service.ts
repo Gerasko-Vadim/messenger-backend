@@ -6,6 +6,8 @@ import { CreateNewDto } from './dto/create-new.dto';
 import { New, NewDocument } from './schema/new.chema';
 import * as _ from 'lodash';
 import { INew } from './interface/new.interface';
+import { DeleteNewDto } from "./dto/delete-new.dto"
+import moment from 'moment';
 
 @Injectable()
 export class NewsService {
@@ -27,11 +29,12 @@ export class NewsService {
         }
     }
 
-    async findByIdDelete(uId : string , _id: string){
-        return await this.newModel.deleteOne({uId,_id})
+    async findByIdDelete(data: DeleteNewDto) {
+        const { uId, _id } = data;
+        return await this.newModel.deleteOne({ uId, _id })
     }
 
-    async findAllNews(): Promise<INew[]>{
+    async findAllNews(): Promise<INew[]> {
         return await this.newModel.find().exec()
     }
 }

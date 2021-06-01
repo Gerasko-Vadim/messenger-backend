@@ -16,8 +16,6 @@ export class ChatGroup {
     @Prop({ type: String, required: true })
     group: string;
 
-    @Prop({ type: String, required: true })
-    roomId: string;
 }
 
 export const ChatGroupSchema = SchemaFactory.createForClass(ChatGroup);

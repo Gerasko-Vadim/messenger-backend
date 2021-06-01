@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import moment from "moment";
 
 import { Document } from 'mongoose';
 
@@ -7,10 +8,12 @@ export type NewDocument = New & Document;
 
 @Schema()
 export class New {
-    @Prop({type: String, required: false})
+  
+
+    @Prop({type: String, required: false,})
     avatar: string | null;
 
-    @Prop({type: String, required: true, default: new Date})
+    @Prop({type: String, default: new Date().toLocaleDateString()})
     createDate: Date
 
     @Prop({type: String, required: true})

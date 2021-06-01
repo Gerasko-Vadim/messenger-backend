@@ -11,6 +11,5 @@ export class CreateChatGroupDto {
     @IsString()
     group: string;
 
-    @IsString()
-    roomId: string;
+
 }
