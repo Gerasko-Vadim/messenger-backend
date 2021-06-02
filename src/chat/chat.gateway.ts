@@ -17,6 +17,8 @@ import { map } from 'rxjs/operators';
 import { Server, Socket } from 'socket.io';
 import { ChatGroupService } from 'src/chat-group/chat-group.service';
 import { IChatGroup } from 'src/chat-group/interface/chat-group.interface';
+import { MessegesService } from 'src/messeges/messeges.service';
+import { SendMessegDto } from 'src/messeges/schema/sendMesseg.dto';
 import { CreateNewDto } from 'src/news/dto/create-new.dto';
 import { NewsService } from 'src/news/news.service';
 import { UsersService } from 'src/users/users.service';
@@ -28,7 +30,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     private readonly userService: UsersService,
     private readonly newService: NewsService,
-    private readonly chatGroupService: ChatGroupService
+    private readonly chatGroupService: ChatGroupService,
+    private readonly messegeService: MessegesService
 
   ) { }
   @WebSocketServer() server: Server;
@@ -45,7 +48,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async addChat(@ConnectedSocket() client: Socket, @MessageBody() data: IChatGroup) {
     try {
       console.log(data)
-      await this.chatGroupService.create(data)
+      const { _id } = await this.chatGroupService.create(data)
+      await this.messegeService.create({
+        roomId: _id,
+        ...data
+      })
+
       return await this.chatGroupService.findByCreatedId(client.handshake.query.id)
 
     } catch (error) {
@@ -55,10 +63,10 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('CHAT:JOIN')
-  async chatJoin(@ConnectedSocket() client: Socket, @MessageBody() id: string ) {
+  async chatJoin(@ConnectedSocket() client: Socket, @MessageBody() id: string) {
     try {
-     client.join(id)
-     
+      client.join(id)
+
 
 
     } catch (error) {
@@ -66,7 +74,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
 
   }
-  
+
   @SubscribeMessage('getAllChats')
   async getAllChats(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
     try {
@@ -120,9 +128,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('message:add')
-  async allChat(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+  async allChat(@ConnectedSocket() client: Socket, @MessageBody() data: SendMessegDto) {
     try {
-      client.emit('chats', data)
+      console.log(data)
+      await this.messegeService.sendMessage(data)
+      console.log("await")
+      return this.messegeService.getAllMessagesRooms(data.roomId)
 
     } catch (error) {
 

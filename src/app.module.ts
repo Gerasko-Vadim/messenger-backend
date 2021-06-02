@@ -25,6 +25,7 @@ import { MessegesModule } from './messeges/messeges.module';
 
 
 
+
 dotenv.config({path:'.env.development'})
  const uri = process.env.MONGODB || 'mongodb+srv://vadim:12345adidas99@cluster0.2exxq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 @Module({
@@ -52,6 +53,5 @@ dotenv.config({path:'.env.development'})
   MessegesModule,
  ],
  controllers:[AppController],
- providers: [MessegesService],
 })
 export class AppModule {}

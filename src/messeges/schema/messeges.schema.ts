@@ -14,21 +14,22 @@ export class Messeges {
     @Prop({type:String, required:true})
     nameRoom: string
 
-    @Prop({type:String, required:true})
-    roomId: string
+    @Prop({required:true})
+    roomId:  string
     
     @Prop({ type: String, required: true })
     group: string;
 
     @Prop({type: Array , required: true})
-    messeges:[{
+    messages:[{
 
-        createdTime: {type: Date}
-        author: {type: mongoose.Types.ObjectId , ref: "User"} 
-        messege: string
+        createdTime: Date
+        author: {type: string | any , ref: "User"} 
+        message: string
     }]
 
 }
+
 
 export const MessegesSchema = SchemaFactory.createForClass(Messeges);
 
