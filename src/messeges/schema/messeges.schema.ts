@@ -8,7 +8,7 @@ export type MessegesDocument = Messeges & Document;
 
 @Schema()
 export class ArrayMessage {
-    @Prop( {type : Date , default : new Date()})
+    @Prop( {type : Date , default : new Date(), required: false})
     createdTime : Date
 
     @Prop({type: mongoose.Types.ObjectId , ref: "User"})
@@ -33,7 +33,7 @@ export class Messeges {
     group: string;
 
     @Prop({ type: [ArrayMessage], required: true })
-    messages: []
+    messages: Array<ArrayMessage>
 
 }
 

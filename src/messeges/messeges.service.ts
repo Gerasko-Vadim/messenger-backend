@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateMessageDto } from './dto/create-messeges.dto';
-import { Messeges, MessegesDocument } from './schema/messeges.schema';
+import { ArrayMessage, Messeges, MessegesDocument } from './schema/messeges.schema';
 import * as _ from 'lodash';
 import { SendMessegDto } from './schema/sendMesseg.dto';
 import { IReadMesseges } from './interafce/readable-messege.interface';
@@ -28,11 +28,13 @@ export class MessegesService {
     // }
     async sendMessage(sendData: SendMessegDto) {
         const { roomId, author, message } = sendData;
-        console.log("send", sendData)
-        const data = {
-            author: mongoose.Types.ObjectId(author),
-            message
-        }
+        console.log("send", sendData);
+        сonst data12: ArrayMessage = new ArrayMessage();
+
+        data12.createdTime = new Date();
+        data.author = mongoose.Types.ObjectId(author);
+        data.message = message;
+
 
         return await this.messageModel.updateOne({ roomId: roomId }, { $push: { 'messages': data } })
     }
