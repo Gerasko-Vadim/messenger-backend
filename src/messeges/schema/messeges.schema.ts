@@ -41,4 +41,5 @@ export class Messeges {
 
 
 export const MessegesSchema = SchemaFactory.createForClass(Messeges);
+export const ArrayMessegesSchema = SchemaFactory.createForClass(ArrayMessage);
 

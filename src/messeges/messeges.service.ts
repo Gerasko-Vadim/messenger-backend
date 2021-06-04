@@ -29,14 +29,14 @@ export class MessegesService {
     async sendMessage(sendData: SendMessegDto) {
         const { roomId, author, message } = sendData;
         console.log("send", sendData);
-        сonst data12: ArrayMessage = new ArrayMessage();
+        const data: ArrayMessage = new ArrayMessage();
 
-        data12.createdTime = new Date();
+        data.createdTime = new Date();
         data.author = mongoose.Types.ObjectId(author);
         data.message = message;
 
 
-        return await this.messageModel.updateOne({ roomId: roomId }, { $push: { 'messages': data } })
+        return await this.messageModel.updateOne({ roomId: roomId }, { $push: { messages: data } })
     }
 
     async getAllMessagesRooms(id: string) {
