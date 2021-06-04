@@ -30,7 +30,6 @@ export class MessegesService {
         const { roomId, author, message } = sendData;
         console.log("send", sendData)
         const data = {
-            createdTime: new Date(),
             author: mongoose.Types.ObjectId(author),
             message
         }

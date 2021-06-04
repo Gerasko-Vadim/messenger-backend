@@ -7,6 +7,18 @@ import * as mongoose from 'mongoose';
 export type MessegesDocument = Messeges & Document;
 
 @Schema()
+export class ArrayMessage {
+    @Prop( {type : Date , default : new Date()})
+    createdTime : Date
+
+    @Prop({type: mongoose.Types.ObjectId , ref: "User"})
+    author: mongoose.Types.ObjectId
+
+    @Prop({type: String})
+    message: string
+}
+
+@Schema()
 export class Messeges {
     @Prop({ type: String, required: true })
     createUserId: string;
@@ -20,15 +32,12 @@ export class Messeges {
     @Prop({ type: String, required: true })
     group: string;
 
-    @Prop({ type: Array<Object>, required: true })
-    messages: Array<{
-
-        createdTime: Date
-        author: { type: any | mongoose.Types.ObjectId, ref: "User" }
-        message: string
-    }>
+    @Prop({ type: [ArrayMessage], required: true })
+    messages: []
 
 }
+
+
 
 
 export const MessegesSchema = SchemaFactory.createForClass(Messeges);
