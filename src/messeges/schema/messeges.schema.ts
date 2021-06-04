@@ -24,7 +24,7 @@ export class Messeges {
     messages:[{
 
         createdTime: Date
-        author: {type: string | any , ref: "User"} 
+        author: {type: any | mongoose.Types.ObjectId , ref: "User"} 
         message: string
     }]
 

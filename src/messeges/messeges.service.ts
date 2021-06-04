@@ -6,20 +6,21 @@ import { Messeges, MessegesDocument } from './schema/messeges.schema';
 import * as _ from 'lodash';
 import { SendMessegDto } from './schema/sendMesseg.dto';
 import { IReadMesseges } from './interafce/readable-messege.interface';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class MessegesService {
     constructor(@InjectModel(Messeges.name) private messageModel: Model<MessegesDocument>) {
     }
     async create(data: CreateMessageDto) {
-        const {roomId} = data;
+        const { roomId } = data;
         const newMesseges = new this.messageModel(_.assignIn(data, { messages: [] }))
-         await newMesseges.save()
-         return  await this.messageModel.updateOne({ roomId:roomId }, {$set:{ messages: [] }}, { new: true })
+        await newMesseges.save()
+        return await this.messageModel.updateOne({ roomId: roomId }, { $set: { messages: [] } }, { new: true })
     }
 
     async addProperty(id: any) {
-        
+
     }
 
     // async find(id: string): Promise<IReadMesseges[]> {
@@ -30,7 +31,7 @@ export class MessegesService {
         console.log("send", sendData)
         const data = {
             createdTime: new Date(),
-            author,
+            author: mongoose.Types.ObjectId(author),
             message
         }
 
@@ -39,6 +40,12 @@ export class MessegesService {
 
     async getAllMessagesRooms(id: string) {
         return await this.messageModel.findOne({ roomId: id })
+            .populate({ path: 'messages' })
+            .populate({
+                path: 'author',
+                model: 'Users'
+
+            })
 
     }
 
