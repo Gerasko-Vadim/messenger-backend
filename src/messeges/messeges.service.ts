@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { CreateMessageDto } from './dto/create-messeges.dto';
 import { ArrayMessage, MessagesDocument, Messeges } from './schema/messeges.schema';
 import * as _ from 'lodash';
-import { SendMessegDto } from './schema/sendMesseg.dto';
+import { SendMessageDto } from './dto/sendMesseg.dto'
 import { IReadMesseges } from './interafce/readable-messege.interface';
 import * as mongoose from 'mongoose';
 
@@ -14,9 +14,12 @@ export class MessegesService {
     }
     async create(data: CreateMessageDto) {
         const { roomId } = data;
-        const newMesseges = new this.messageModel(_.assignIn(data, { messages: [] }))
-        await newMesseges.save()
-        return await this.messageModel.updateOne({ roomId: roomId }, { $set: { messages: [] } }, { new: true })
+        const newMesseges = new this.messageModel(_.assignIn({
+            roomId: mongoose.Types.ObjectId(roomId),
+            ...data
+        }, { messages: [] }))
+        return await newMesseges.save()
+        // return await this.messageModel.updateOne({ roomId: roomId }, { $set: { messages: [] } }, { new: true })
     }
 
     async addProperty(id: any) {
@@ -26,15 +29,17 @@ export class MessegesService {
     // async find(id: string): Promise<IReadMesseges[]> {
     //     return await this.messegeModel.find({id}).exec();
     // }
-    async sendMessage(sendData: SendMessegDto) {
+    async sendMessage(sendData: SendMessageDto) {
         const { roomId, author, message } = sendData;
         console.log("send", sendData);
-        const data: ArrayMessage = new ArrayMessage();
+        const data = {
+            author: mongoose.Types.ObjectId(author),
+            message: message,
+            createdTime: new Date()
+        }
 
-        data.author = mongoose.Types.ObjectId(author);
-        data.message = message;
 
-        return await this.messageModel.updateOne({ roomId: mongoose.Types.ObjectId(roomId) }, { $push: { messages:data } })
+        return await this.messageModel.updateOne({ roomId: mongoose.Types.ObjectId(roomId) }, { $push: { "messages": data } })
     }
 
     async getAllMessagesRooms(id: string) {

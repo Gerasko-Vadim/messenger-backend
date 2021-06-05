@@ -18,7 +18,7 @@ import { Server, Socket } from 'socket.io';
 import { ChatGroupService } from 'src/chat-group/chat-group.service';
 import { IChatGroup } from 'src/chat-group/interface/chat-group.interface';
 import { MessegesService } from 'src/messeges/messeges.service';
-import { SendMessegDto } from 'src/messeges/schema/sendMesseg.dto';
+import { SendMessegDto } from 'src/messeges/dto/sendMesseg.dto';
 import { CreateNewDto } from 'src/news/dto/create-new.dto';
 import { NewsService } from 'src/news/news.service';
 import { UsersService } from 'src/users/users.service';
