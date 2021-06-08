@@ -10,7 +10,7 @@ export class ArrayMessage extends Document {
     @Prop({ type: Date, default: new Date(), required: false })
     createdTime: Date
 
-    @Prop({ type: mongoose.Types.ObjectId, ref: "User" })
+    @Prop({ type: mongoose.Types.ObjectId, ref: "Users" })
     author: mongoose.Types.ObjectId
 
     @Prop({ type: String })
@@ -28,14 +28,11 @@ export class Messeges extends Document {
     @Prop({ type: String, required: true })
     nameRoom: string;
 
-    @Prop({ type: mongoose.Types.ObjectId, required: true })
-    roomId: mongoose.Types.ObjectId;
-
     @Prop({ type: String, required: true })
     group: string;
 
     @Prop({ type: [ArrayMessegesSchema], default: [], required: true })
-    messages: Array<ArrayMessage>
+    messages?: Array<ArrayMessage>
 
 }
 

@@ -18,11 +18,12 @@ import { Server, Socket } from 'socket.io';
 import { ChatGroupService } from 'src/chat-group/chat-group.service';
 import { IChatGroup } from 'src/chat-group/interface/chat-group.interface';
 import { MessegesService } from 'src/messeges/messeges.service';
-import { SendMessegDto } from 'src/messeges/dto/sendMesseg.dto';
+import { SendMessageDto } from 'src/messeges/dto/sendMesseg.dto';
 import { CreateNewDto } from 'src/news/dto/create-new.dto';
 import { NewsService } from 'src/news/news.service';
 import { UsersService } from 'src/users/users.service';
 import { IDeleteChat } from './iterface/delete-chat.interface';
+import { CreateMessageDto } from 'src/messeges/dto/create-messeges.dto';
 
 @WebSocketGateway({ transports: ['websocket'] })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -45,16 +46,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('chat:add')
-  async addChat(@ConnectedSocket() client: Socket, @MessageBody() data: IChatGroup) {
+  async addChat(@ConnectedSocket() client: Socket, @MessageBody() data: CreateMessageDto) {
     try {
       console.log(data)
-      const { _id } = await this.chatGroupService.create(data)
-      await this.messegeService.create({
-        roomId: _id,
-        ...data
-      })
+       await this.messegeService.create(data)
+     
 
-      return await this.chatGroupService.findByCreatedId(client.handshake.query.id)
+      return await this.messegeService.getAllChatsById(client.handshake.query.id)
 
     } catch (error) {
 
@@ -80,10 +78,10 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     try {
       const user = await this.userService.find(client.handshake.query.id)
       if (user.role === "student") {
-        return await this.chatGroupService.findByGroup(user.group)
+        return await this.messegeService.getAllChatsByGroup(user.group)
       }
       else {
-        return await this.chatGroupService.findByCreatedId(client.handshake.query.id)
+        return await this.messegeService.getAllChatsById(client.handshake.query.id)
       }
 
     } catch (error) {
@@ -128,7 +126,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('message:add')
-  async allChat(@ConnectedSocket() client: Socket, @MessageBody() data: SendMessegDto) {
+  async allChat(@ConnectedSocket() client: Socket, @MessageBody() data: SendMessageDto) {
     try {
       console.log(data)
       await this.messegeService.sendMessage(data)
