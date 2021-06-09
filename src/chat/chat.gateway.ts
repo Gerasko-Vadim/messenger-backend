@@ -60,10 +60,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   }
 
-  @SubscribeMessage('CHAT:JOIN')
+  @SubscribeMessage('DIALOGS:JOIN')
   async chatJoin(@ConnectedSocket() client: Socket, @MessageBody() id: string) {
     try {
-      client.join(id)
+      client.join(id);
+      const messages = await this.messegeService.getAllMessagesRooms(id)
+      this.server.to(id).emit('MESSAGES:DIALOGS',messages)
+      return messages;
 
 
 
@@ -131,7 +134,10 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       console.log(data)
       await this.messegeService.sendMessage(data)
       console.log("await")
-      return this.messegeService.getAllMessagesRooms(data.roomId)
+      
+      const messages = await this.messegeService.getAllMessagesRooms(data.roomId)
+      this.server.to(data.roomId).emit('NEW:MESSAGES',messages)
+      return messages
 
     } catch (error) {
 

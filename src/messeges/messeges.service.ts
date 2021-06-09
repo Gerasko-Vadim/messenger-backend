@@ -32,17 +32,12 @@ export class MessegesService {
         data.author = mongoose.Types.ObjectId(author)
         data.createdTime = new Date()
         data.message = message
-
-        return await this.messageModel.updateOne({ _id : roomId}, { $push: { "messages": data } })
+        return await this.messageModel.updateOne({_id: mongoose.Types.ObjectId(roomId)}, { $push: { messages: data } })
     }
 
     async getAllMessagesRooms(id: string) {
-        return await this.messageModel.findOne({ _id: mongoose.Types.ObjectId(id) }).lean()
-        .populate({ 
-            path: 'massages',
-            populate: {
-              path: 'author',
-            }})
+        return await this.messageModel.findOne({ _id: mongoose.Types.ObjectId(id) })
+
 
     }
 

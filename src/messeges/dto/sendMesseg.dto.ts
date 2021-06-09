@@ -3,6 +3,6 @@
 
 export class SendMessageDto{
     readonly roomId: string 
-    readonly author: any
+    readonly author: string
     readonly message : string
 }
